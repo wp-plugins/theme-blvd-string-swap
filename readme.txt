@@ -10,8 +10,6 @@ When using a theme with Theme Blvd framework version 2.0.0+, this plugin is will
 
 When using a theme with Theme Blvd framework version 2.0.0+, this plugin is will provide you with a user-friendly interface where you can translate most of the strings you see on the frontend of your site.
 
-*Note: It's a good idea to make sure you're up-to-date on whichever Theme Blvd theme you're using. In version 2.0.5 of the framework, several more strings in reguards to displaying comment-related items were added to the framework's built-in frontend localization filter.*
-
 = Who is this plugin for? =
 
 This plugin is useful for people trying to accomplish a couple different things. Let me explain.
@@ -38,7 +36,7 @@ After you install this plugin, you can then go to *Tools > TB String Swap* in yo
 
 == Changelog ==
 
-= 1.0.1
+= 1.0.1 =
 
 * Plugin now works with a more dynamically to pull text strings with new structure of [Theme Blvd Framework 2.1 update](http://www.wpjumpstart.com/framework-updates/theme-blvd-2-1-0-framework-update/) with fallbacks built-in for previous framework versions.
 * Added higher priority to text string filter to ensure that the plugin will, not only override the framework, but also any text strings edits your premium theme may have made.
