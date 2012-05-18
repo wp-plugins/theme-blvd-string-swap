@@ -1,9 +1,8 @@
 === Theme Blvd String Swap ===
 Contributors: themeblvd
 Tags: themeblvd, localization, localize, translate
-Requires at least: 3.2
-Tested up to: 3.3.1
-Stable tag: 1.0.0
+Requires at least: Theme Blvd Framework 2.0+
+Stable tag: 1.0.1
 
 When using a theme with Theme Blvd framework version 2.0.0+, this plugin is will allow to translate strings you see on the frontend only.
 
@@ -38,6 +37,11 @@ After you install this plugin, you can then go to *Tools > TB String Swap* in yo
 1. Admin interface for plugin under *Tools > TB String Swap*.
 
 == Changelog ==
+
+= 1.0.1
+
+* Plugin now works with a more dynamically to pull text strings with new structure of [Theme Blvd Framework 2.1 update](http://www.wpjumpstart.com/framework-updates/theme-blvd-2-1-0-framework-update/) with fallbacks built-in for previous framework versions.
+* Added higher priority to text string filter to ensure that the plugin will, not only override the framework, but also any text strings edits your premium theme may have made.
 
 = 1.0.0 =
 

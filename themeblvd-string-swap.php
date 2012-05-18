@@ -2,7 +2,7 @@
 /*
 Plugin Name: Theme Blvd String Swap
 Description: This plugin will allow you alter the standard text strings that appear on the frontend of your site when using a Theme Blvd theme.
-Version: 1.0.0
+Version: 1.0.1
 Author: Jason Bobich
 Author URI: http://jasonbobich.com
 License: GPL2
@@ -32,12 +32,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /**
  * Get text strings
  *
- * Currently with the way the theme framework is setup, a filter is added to 
- * the strings ready for localization making all this possible. However there 
- * is currently no way to dynamically pull all of these text strings. So, we 
- * have to manually declare them here. However, in the future we should change 
- * the framework to have a function for pulling the strings, and then we can 
- * eliminate this entire function from this plugin.
+ * This function only gets used if the user is using a theme with 
+ * Theme Blvd framework prior to 2.1. So, it's essentially a fail-safe.
  */
 
 function tb_string_swap_get_strings() {
@@ -94,7 +90,23 @@ function tb_string_swap_get_strings() {
  */
 
 function tb_string_swap_get_options() {
-	$locals = tb_string_swap_get_strings();
+	
+	// Include frontend locals, which are normally 
+	// not included in admin panel.
+	require_once( TEMPLATEPATH . '/framework/frontend/functions/locals.php' );
+	
+	// Retrieve current local text strings
+	if( function_exists('themeblvd_get_all_locals') ) {
+		// Dynamically pull from theme with 
+		// filters applied.
+		$locals = themeblvd_get_all_locals();
+	} else {
+		// Old method for people using Theme Blvd 
+		// framework prior to 2.1
+		$locals = tb_string_swap_get_strings();
+	}
+
+	// Configure options array
 	$options[] = array(
 		'name'	=> 'Standard Text Strings',
 		'desc'	=> __( 'Here you can find most of the text strings that you will typically find on the frontend of your site when using a Theme Blvd theme. Simply enter in a new value for each one that you want to change.<br><br>Note: This is a general plugin aimed at working with all Theme Blvd themes, however it\'s impossible to guarantee that this will effect every theme in the exact same way.', 'themeblvd' ),
@@ -276,15 +288,14 @@ if ( ! function_exists( 'tb_string_swap_page' ) ) {
  */
 
 function tb_string_swap_apply_changes( $locals ) {
-	$default_locals = tb_string_swap_get_strings();
 	$new_locals = get_option('tb_string_swap');
-	foreach ( $default_locals as $id => $string ) {
+	foreach ( $locals as $id => $string ) {
 		if( isset( $new_locals[$id] ) )
 			$locals[$id] = $new_locals[$id];
 	}
 	return $locals;
 }
-add_filter( 'themeblvd_frontend_locals', 'tb_string_swap_apply_changes' ); // May need an if( ! is_admin ) if dynamically pull text strings in the future.
+add_filter( 'themeblvd_frontend_locals', 'tb_string_swap_apply_changes', 999 );
 
 /**
  * Blog Meta action
@@ -322,4 +333,4 @@ function tb_string_swap_add_actions() {
 		add_action( 'themeblvd_blog_meta', 'tb_string_swap_blog_meta' );
 	}
 }
-add_action( 'after_setup_theme', 'tb_string_swap_add_actions' );
+add_action( 'after_setup_theme', 'tb_string_swap_add_actions', 999 );
