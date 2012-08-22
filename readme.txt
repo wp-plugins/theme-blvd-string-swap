@@ -36,6 +36,10 @@ After you install this plugin, you can then go to *Tools > TB String Swap* in yo
 
 == Changelog ==
 
+= 1.0.2 =
+
+* Added compatibility for latest Theme Blvd patch updates - Akita v1.1.5, Alyeska v2.1.5, Arcadian v1.1.5, Barely Corporate v3.1.5, Breakout v1.1.4, Prime Time v1.1.4, and Swagger 1.1.5
+
 = 1.0.1 =
 
 * Plugin now works with a more dynamically to pull text strings with new structure of [Theme Blvd Framework 2.1 update](http://www.wpjumpstart.com/framework-updates/theme-blvd-2-1-0-framework-update/) with fallbacks built-in for previous framework versions.
