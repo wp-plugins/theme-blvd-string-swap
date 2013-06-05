@@ -2,7 +2,7 @@
 /*
 Plugin Name: Theme Blvd String Swap
 Description: This plugin will allow you alter the standard text strings that appear on the frontend of your site when using a Theme Blvd theme.
-Version: 1.0.4
+Version: 1.0.5
 Author: Jason Bobich
 Author URI: http://jasonbobich.com
 License: GPL2
@@ -25,7 +25,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-define( 'TB_STRING_SWAP_PLUGIN_VERSION', '1.0.4' );
+define( 'TB_STRING_SWAP_PLUGIN_VERSION', '1.0.5' );
 define( 'TB_STRING_SWAP_PLUGIN_DIR', dirname( __FILE__ ) );
 define( 'TB_STRING_SWAP_PLUGIN_URI', plugins_url( '' , __FILE__ ) );
 
@@ -54,7 +54,7 @@ function tb_string_swap_warning() {
 	if( ! get_user_meta( $current_user->ID, 'tb_string_swap_no_framework' ) ){
 		echo '<div class="updated">';
 		echo '<p>'.__( 'You currently have the "Theme Blvd String Swap" plugin activated, however you are not using a compatible Theme Blvd theme, and so this plugin will not do anything.', 'tb_string_swap' ).'</p>';
-		echo '<p><a href="?tb_nag_ignore=tb_string_swap_no_framework">'.__('Dismiss this notice', 'tb_string_swap').'</a> | <a href="http://www.themeblvd.com" target="_blank">'.__('Visit ThemeBlvd.com', 'tb_string_swap').'</a></p>';
+		echo '<p><a href="'.tb_string_swap_disable_url('tb_string_swap_no_framework').'">'.__('Dismiss this notice', 'tb_string_swap').'</a> | <a href="http://www.themeblvd.com" target="_blank">'.__('Visit ThemeBlvd.com', 'tb_string_swap').'</a></p>';
 		echo '</div>';
 	}
 }
@@ -69,6 +69,26 @@ function tb_string_swap_disable_nag() {
 	global $current_user;
     if ( isset( $_GET['tb_nag_ignore'] ) )
          add_user_meta( $current_user->ID, $_GET['tb_nag_ignore'], 'true', true );
+}
+
+/**
+ * Disable admin notice URL.
+ *
+ * @since 1.0.5
+ */
+
+function tb_string_swap_disable_url( $id ) {
+
+	global $pagenow;
+
+	$url = admin_url( $pagenow );
+
+	if( ! empty( $_SERVER['QUERY_STRING'] ) )
+		$url .= sprintf( '?%s&tb_nag_ignore=%s', $_SERVER['QUERY_STRING'], $id );
+	else
+		$url .= sprintf( '?tb_nag_ignore=%s', $id );
+
+	return $url;
 }
 
 /*-----------------------------------------------------------------------------------*/
