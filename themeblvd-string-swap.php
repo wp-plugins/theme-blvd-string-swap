@@ -2,30 +2,30 @@
 /*
 Plugin Name: Theme Blvd String Swap
 Description: This plugin will allow you alter the standard text strings that appear on the frontend of your site when using a Theme Blvd theme.
-Version: 1.0.5
-Author: Jason Bobich
-Author URI: http://jasonbobich.com
+Version: 1.0.6
+Author: Theme Blvd
+Author URI: http://themeblvd.com
 License: GPL2
+
+    Copyright 2014  Theme Blvd
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License version 2,
+    as published by the Free Software Foundation.
+
+    You may NOT assume that you can use any other version of the GPL.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    The license for this software can likely be found here:
+    http://www.gnu.org/licenses/gpl-2.0.html
+
 */
 
-/*
-Copyright 2012 JASON BOBICH
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License, version 2, as 
-published by the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-define( 'TB_STRING_SWAP_PLUGIN_VERSION', '1.0.5' );
+define( 'TB_STRING_SWAP_PLUGIN_VERSION', '1.0.6' );
 define( 'TB_STRING_SWAP_PLUGIN_DIR', dirname( __FILE__ ) );
 define( 'TB_STRING_SWAP_PLUGIN_URI', plugins_url( '' , __FILE__ ) );
 
@@ -34,27 +34,28 @@ define( 'TB_STRING_SWAP_PLUGIN_URI', plugins_url( '' , __FILE__ ) );
  *
  * @since 1.0.3
  */
-
 function tb_string_swap_textdomain() {
-	load_plugin_textdomain( 'tb_string_swap', false, TB_STRING_SWAP_PLUGIN_DIR . '/lang' );
+	load_plugin_textdomain('theme-blvd-string-swap');
 }
-add_action( 'plugins_loaded', 'tb_string_swap_textdomain' );
+add_action( 'init', 'tb_string_swap_textdomain' );
 
 /**
- * Display warning telling the user they must have a 
- * theme with Theme Blvd framework v2.2+ installed in 
+ * Display warning telling the user they must have a
+ * theme with Theme Blvd framework v2.2+ installed in
  * order to run this plugin.
  *
  * @since 1.0.4
  */
-
 function tb_string_swap_warning() {
+
 	global $current_user;
-	// DEBUG: delete_user_meta( $current_user->ID, 'tb_shortcode_no_framework' )
-	if( ! get_user_meta( $current_user->ID, 'tb_string_swap_no_framework' ) ){
+
+	// DEBUG: delete_user_meta( $current_user->ID, 'tb-nag-shortcodes-no-framework' );
+
+	if ( ! get_user_meta( $current_user->ID, 'tb-nag-string-swap-no-framework' ) ) {
 		echo '<div class="updated">';
-		echo '<p>'.__( 'You currently have the "Theme Blvd String Swap" plugin activated, however you are not using a compatible Theme Blvd theme, and so this plugin will not do anything.', 'tb_string_swap' ).'</p>';
-		echo '<p><a href="'.tb_string_swap_disable_url('tb_string_swap_no_framework').'">'.__('Dismiss this notice', 'tb_string_swap').'</a> | <a href="http://www.themeblvd.com" target="_blank">'.__('Visit ThemeBlvd.com', 'tb_string_swap').'</a></p>';
+		echo '<p><strong>Theme Blvd String Swap:</strong> '.__( 'You are not using a theme with the Theme Blvd Framework v2+, and so this plugin will not do anything.', 'theme-blvd-string-swap' ).'</p>';
+		echo '<p><a href="'.tb_string_swap_disable_url('string-swap-no-framework').'">'.__('Dismiss this notice', 'theme-blvd-string-swap').'</a> | <a href="http://www.themeblvd.com" target="_blank">'.__('Visit ThemeBlvd.com', 'theme-blvd-string-swap').'</a></p>';
 		echo '</div>';
 	}
 }
@@ -64,29 +65,41 @@ function tb_string_swap_warning() {
  *
  * @since 1.0.4
  */
-
 function tb_string_swap_disable_nag() {
+
 	global $current_user;
-    if ( isset( $_GET['tb_nag_ignore'] ) )
-         add_user_meta( $current_user->ID, $_GET['tb_nag_ignore'], 'true', true );
+
+	if ( ! isset($_GET['nag-ignore']) ) {
+		return;
+	}
+
+	if ( strpos($_GET['nag-ignore'], 'tb-nag-') !== 0 ) { // meta key must start with "tb-nag-"
+		return;
+	}
+
+	if ( isset($_GET['security']) && wp_verify_nonce( $_GET['security'], 'themeblvd-string-swap-nag' ) ) {
+		add_user_meta( $current_user->ID, $_GET['nag-ignore'], 'true', true );
+	}
 }
 
 /**
  * Disable admin notice URL.
  *
- * @since 1.0.5
+ * @since 1.0.4
  */
-
 function tb_string_swap_disable_url( $id ) {
 
 	global $pagenow;
 
 	$url = admin_url( $pagenow );
 
-	if( ! empty( $_SERVER['QUERY_STRING'] ) )
-		$url .= sprintf( '?%s&tb_nag_ignore=%s', $_SERVER['QUERY_STRING'], $id );
-	else
-		$url .= sprintf( '?tb_nag_ignore=%s', $id );
+	if( ! empty( $_SERVER['QUERY_STRING'] ) ) {
+		$url .= sprintf( '?%s&nag-ignore=%s', $_SERVER['QUERY_STRING'], 'tb-nag-'.$id );
+	} else {
+		$url .= sprintf( '?nag-ignore=%s', 'tb-nag-'.$id );
+	}
+
+	$url .= sprintf( '&security=%s', wp_create_nonce('themeblvd-string-swap-nag') );
 
 	return $url;
 }
@@ -98,12 +111,12 @@ function tb_string_swap_disable_url( $id ) {
 /**
  * Get text strings
  *
- * This function only gets used if the user is using a theme with 
- * Theme Blvd framework prior to 2.1. So, it's essentially a fail-safe.
+ * This function only gets used if the user
+ * is using a theme with Theme Blvd framework
+ * prior to 2.1. So, it's essentially a fail-safe.
  */
-
 function tb_string_swap_get_strings() {
-	$locals = array ( 
+	$locals = array (
 		'404'						=> 'Apologies, but the page you\'re looking for can\'t be found.',
 		'404_title'					=> '404 Error',
 		'archive_no_posts'			=> 'Apologies, but there are no posts to display.',
@@ -152,62 +165,78 @@ function tb_string_swap_get_strings() {
 }
 
 /**
- * Get Options to pass into Option Framework's function to generate form.
+ * Get Options to pass into Option Framework's
+ * function to generate form.
  */
-
 function tb_string_swap_get_options() {
-	
-	// Prior to framework v2.2, frontend locals were not 
+
+	// Prior to framework v2.2, frontend locals were not
 	// included on admin side.
 	$old_file = TEMPLATEPATH . '/framework/frontend/functions/locals.php';
 	$new_file_1 = TEMPLATEPATH . '/framework/api/locals.php'; // framework v2.2
 	$new_file_2 = TEMPLATEPATH . '/framework/includes/locals.php'; // framework v2.3+
-	
+
 	// So if 2.2's or 2.3+'s files don't exist, we'll manually include the old file.
-	if( ! file_exists( $new_file_1 ) && ! file_exists( $new_file_2 ) )
+	if ( ! file_exists( $new_file_1 ) && ! file_exists( $new_file_2 ) ) {
 		include_once( $old_file ); // For framework prior to 2-2.1
-		
-	// Retrieve current local text strings -- This will also 
-	// be modified later to tell the user they need to 
+	}
+
+	// Retrieve current local text strings -- This will also
+	// be modified later to tell the user they need to
 	// update their theme.
-	if( function_exists('themeblvd_get_all_locals') ) {
-		// Dynamically pull from theme with 
+	if ( function_exists('themeblvd_get_all_locals') ) {
+
+		// Dynamically pull from theme with
 		// filters applied.
 		$locals = themeblvd_get_all_locals();
+
 	} else {
-		// Old method for people using Theme Blvd 
+
+		// Old method for people using Theme Blvd
 		// framework prior to 2.1
 		$locals = tb_string_swap_get_strings();
+
 	}
 
 	// Configure options array
 	$options[] = array(
-		'name'	=> __( 'Standard Text Strings', 'tb_string_swap' ),
-		'desc'	=> __( 'Here you can find most of the text strings that you will typically find on the frontend of your site when using a Theme Blvd theme. Simply enter in a new value for each one that you want to change.<br><br>Note: This is a general plugin aimed at working with all Theme Blvd themes, however it\'s impossible to guarantee that this will effect every theme in the exact same way.', 'tb_string_swap' ),
+		'name'	=> __( 'Standard Text Strings', 'theme-blvd-string-swap' ),
+		'desc'	=> __( 'Here you can find most of the text strings that you will typically find on the frontend of your site when using a Theme Blvd theme. Simply enter in a new value for each one that you want to change.<br><br>Note: This is a general plugin aimed at working with all Theme Blvd themes, however it\'s impossible to guarantee that this will effect every theme in the exact same way.', 'theme-blvd-string-swap' ),
 		'type' 	=> 'section_start'
 	);
+
 	foreach( $locals as $id => $string ) {
 		$options[] = array(
-			'desc' 	=> '<strong>'.__( 'Internal ID', 'tb_string_swap' ).':</strong> '.$id.'<br><strong>'.__( 'Original String', 'tb_string_swap' ).':</strong> '.$string,
+			'desc' 	=> '<strong>'.__( 'Internal ID', 'theme-blvd-string-swap' ).':</strong> '.$id.'<br><strong>'.__( 'Original String', 'theme-blvd-string-swap' ).':</strong> '.$string,
 			'id' 	=> $id,
 			'std' 	=> $string,
 			'type' 	=> 'textarea'
 		);
 	}
+
 	$options[] = array(
 		'type' => 'section_end'
 	);
+
 	$options[] = array(
-		'name'	=> __( 'Post List Meta', 'tb_string_swap' ),
-		'desc'	=> __( 'This last option isn\'t technically part of the framework\'s frontend localization filter. However, if you were trying to translate all the frontend strings of the theme, it would be unfortunate for there to be no way to translate the meta info that appears in your blog. So, I\'ve gotten creative and tried to give you the ability to edit this. Keep in mind there is no way to guarentee that this will work in <em>all</em> themes, but play around with and see if it works for you. Also the down side to using this is that I couldn\'t figure out a good way for you to input the number of comments in this string.<br><br><strong>Note: Save this option as blank to allow the theme to show it\'s normal meta info.</strong>', 'tb_string_swap' ),
+		'name'	=> __( 'Blog Meta', 'theme-blvd-string-swap' ),
+		'desc'	=> null,
 		'type' 	=> 'section_start'
 	);
+
 	$options[] = array(
-		'desc' 	=> __( 'Designate how you\'d like the meta info to display in your blog. This typically will show below the title of blog posts in most theme designs.<br><br>You can use the following macros:<br><strong>%date%</strong> - Date post was published.<br><strong>%author%</strong> - Author that wrote the post.<br><strong>%categories%</strong> - Categories post belongs to.', 'tb_string_swap' ),
+		'desc' 	=> __( 'Designate how you\'d like the meta info to display in your blog. This typically will show below the title of blog posts in most theme designs.<br><br>You can use the following macros:<br><strong>%date%</strong> - Date post was published.<br><strong>%author%</strong> - Author that wrote the post.<br><strong>%categories%</strong> - Categories post belongs to.<br><br><em>Note: Save this option as blank to allow the theme to show its normal meta info.</em>', 'theme-blvd-string-swap' ),
 		'id' 	=> 'blog_meta',
-		'std' 	=> __( 'Posted on %date% by %author% in %categories%', 'tb_string_swap' ),
+		'std' 	=> __( 'Posted on %date% by %author% in %categories%', 'theme-blvd-string-swap' ),
 		'type' 	=> 'textarea'
 	);
+
+	if ( version_compare(TB_FRAMEWORK_VERSION, '2.5.0', '>=') ) { // Having this ommitted in older themes is for the "closer" bug!
+		$options[] = array(
+			'type' => 'section_end'
+		);
+	}
+
 	return $options;
 }
 
@@ -216,56 +245,54 @@ function tb_string_swap_get_options() {
 /*-----------------------------------------------------------------------------------*/
 
 /**
- * Hook everything in to being the process only if the user can 
+ * Hook everything in to being the process only if the user can
  * edit theme options, or else no use running this plugin.
  */
-
 function tb_string_swap_admin() {
-	
+
 	// Check to make sure Theme Blvd Framework 2.0+ is running
-	if( ! defined( 'TB_FRAMEWORK_VERSION' ) || version_compare( TB_FRAMEWORK_VERSION, '2.0.0', '<' ) ) {
+	if ( ! defined( 'TB_FRAMEWORK_VERSION' ) || version_compare( TB_FRAMEWORK_VERSION, '2.0.0', '<' ) ) {
 		add_action( 'admin_notices', 'tb_string_swap_warning' );
 		add_action( 'admin_init', 'tb_string_swap_disable_nag' );
 		return;
 	}
-	
-	// If using framework v2.2+, we can use the framework's 
-	// internal options system and if not, we can do it the 
+
+	// If using framework v2.2+, we can use the framework's
+	// internal options system and if not, we can do it the
 	// old-fashioned way.
-	
-	if( class_exists( 'Theme_Blvd_Options_Page' ) ) {
-		
+
+	if ( class_exists( 'Theme_Blvd_Options_Page' ) ) {
+
 		// Use new options system incorporated in v2.2.
-		
+
 		global $_tb_string_swap_admin;
-		
+
 		$options = tb_string_swap_get_options();
 
 		$args = array(
 			'parent'		=> 'tools.php',
-			'page_title' 	=> __( 'Theme Blvd String Swap', 'tb_string_swap' ),
-			'menu_title' 	=> __( 'TB String Swap', 'tb_string_swap' ),
+			'page_title' 	=> __( 'Theme Blvd String Swap', 'theme-blvd-string-swap' ),
+			'menu_title' 	=> __( 'TB String Swap', 'theme-blvd-string-swap' ),
 			'cap'			=> apply_filters( 'tb_string_swap_cap', 'edit_theme_options' )
 		);
-		
-		$_tb_string_swap_admin = new Theme_Blvd_Options_Page( 'tb_string_swap', $options, $args );
-		
+
+		$_tb_string_swap_admin = new Theme_Blvd_Options_Page( 'theme-blvd-string-swap', $options, $args );
+
 	} else {
-	
+
 		// Initiate old-school method for framewok v2.0-2.1
 		add_action( 'init', 'tb_string_swap_rolescheck' );
-	
+
 	}
 }
 add_action( 'after_setup_theme', 'tb_string_swap_admin' );
 
 /**
- * Hook everything in to being the process only if the user can 
+ * Hook everything in to being the process only if the user can
  * edit theme options, or else no use running this plugin.
  *
- * NOTE: This only is used if we're using framework v2.0-2.1. 
+ * NOTE: This only is used if we're using framework v2.0-2.1.
  */
-
 function tb_string_swap_rolescheck() {
 	if ( current_user_can( 'edit_theme_options' ) ) {
 		add_action( 'admin_init', 'tb_string_swap_init' );
@@ -274,14 +301,13 @@ function tb_string_swap_rolescheck() {
 }
 
 /**
- * Add a menu page for this plugin. 
+ * Add a menu page for this plugin.
  *
- * NOTE: This only is used if we're using framework v2.0-2.1. 
+ * NOTE: This only is used if we're using framework v2.0-2.1.
  */
-
 function tb_string_swap_add_page() {
 	// Create sub menu page
-	$string_swap_page = add_submenu_page( 'tools.php', 'TB String Swap', 'TB String Swap', 'administrator', 'tb_string_swap', 'tb_string_swap_page' );		
+	$string_swap_page = add_submenu_page( 'tools.php', 'TB String Swap', 'TB String Swap', 'administrator', 'theme-blvd-string-swap', 'tb_string_swap_page' );
 	// Adds actions to hook in the required css and javascript
 	add_action( "admin_print_styles-$string_swap_page", 'optionsframework_load_styles' );
 	add_action( "admin_print_scripts-$string_swap_page", 'optionsframework_load_scripts' );
@@ -290,44 +316,44 @@ function tb_string_swap_add_page() {
 }
 
 /**
- * Inititate anything needed for the plugin. 
+ * Inititate anything needed for the plugin.
  *
- * NOTE: This only is used if we're using framework v2.0-2.1. 
+ * NOTE: This only is used if we're using framework v2.0-2.1.
  */
- 
 function tb_string_swap_init() {
 	// Register settings
-	register_setting( 'tb_string_swap_settings', 'tb_string_swap', 'tb_string_swap_validate' );
+	register_setting( 'tb_string_swap_settings', 'theme-blvd-string-swap', 'tb_string_swap_validate' );
 }
 
 /**
- * Validate settings when updated. 
+ * Validate settings when updated.
  *
- * Note: This function realistically has more than it needs. 
- * In this specific plugin, we're only working with one kind 
- * of option, which is the "textarea" type of option, however 
- * I'm keeping all validation types in this plugin as to setup 
- * a nice model for making more plugins in the future that 
+ * Note: This function realistically has more than it needs.
+ * In this specific plugin, we're only working with one kind
+ * of option, which is the "textarea" type of option, however
+ * I'm keeping all validation types in this plugin as to setup
+ * a nice model for making more plugins in the future that
  * may also include different kinds of options.
  *
- * NOTE: This only is used if we're using framework v2.0-2.1. 
+ * NOTE: This only is used if we're using framework v2.0-2.1.
  */
-
 function tb_string_swap_validate( $input ) {
-	
-	// Reset Settings	
-	if( isset( $_POST['reset'] ) ) {
+
+	// Reset Settings
+	if ( isset( $_POST['reset'] ) ) {
 		$empty = array();
-		add_settings_error( 'tb_string_swap', 'restore_defaults', __( 'Default options restored.', 'tb_string_swap' ), 'updated fade' );
+		add_settings_error( 'theme-blvd-string-swap', 'restore_defaults', __( 'Default options restored.', 'theme-blvd-string-swap' ), 'updated fade' );
 		return $empty;
 	}
-	
+
 	// Save Options
 	if ( isset( $_POST['update'] ) && isset( $_POST['options'] ) ) {
+
 		$clean = array();
 		$options = tb_string_swap_get_options();
+
 		foreach ( $options as $option ) {
-			
+
 			// Verify we have what need from options
 			if ( ! isset( $option['id'] ) ) continue;
 			if ( ! isset( $option['type'] ) ) continue;
@@ -347,11 +373,13 @@ function tb_string_swap_validate( $input ) {
 			}
 
 			// For a value to be submitted to database it must pass through a sanitization filter
-			if ( has_filter( 'of_sanitize_' . $option['type'] ) ) {				
+			if ( has_filter( 'of_sanitize_' . $option['type'] ) ) {
 				$clean[$id] = apply_filters( 'of_sanitize_' . $option['type'], $_POST['options'][$id], $option );
 			}
 		}
-		add_settings_error( 'tb_string_swap', 'save_options', __( 'Options saved.', 'tb_string_swap' ), 'updated fade' );
+
+		add_settings_error( 'theme-blvd-string-swap', 'save_options', __( 'Options saved.', 'theme-blvd-string-swap' ), 'updated fade' );
+
 		return $clean;
 	}
 }
@@ -363,34 +391,32 @@ function tb_string_swap_validate( $input ) {
 /**
  * Builds out the full admin page.
  *
- * NOTE: This only is used if we're using framework v2.0-2.1. 
+ * NOTE: This only is used if we're using framework v2.0-2.1.
  */
-
 function tb_string_swap_page() {
 
 	// DEBUG
-	// $settings = get_option('tb_string_swap');
+	// $settings = get_option('theme-blvd-string-swap');
 	// echo '<pre>'; print_r($settings); echo '</pre>';
-	
+
 	// Build form
 	$options = tb_string_swap_get_options();
-	$settings = get_option('tb_string_swap');
+	$settings = get_option('theme-blvd-string-swap');
 	$form = optionsframework_fields( 'options', $options, $settings, false );
 	settings_errors();
 	?>
 	<div id="tb_string_swap">
 		<div id="optionsframework" class="wrap">
-		    <?php screen_icon( 'tools' ); ?>
-		    <h2><?php _e( 'Theme Blvd String Swap', 'tb_string_swap' ); ?></h2>
+		    <h2><?php _e( 'Theme Blvd String Swap', 'theme-blvd-string-swap' ); ?></h2>
 			<div class="metabox-holder">
-				<form id="tb_string_swap_form" action="options.php" method="post">	
+				<form id="tb_string_swap_form" action="options.php" method="post">
 					<?php settings_fields('tb_string_swap_settings'); ?>
 					<div class="inner-group">
 						<?php echo $form[0]; ?>
 					</div><!-- .group (end) -->
 					 <div id="optionsframework-submit">
-						<input type="submit" class="button-primary" name="update" value="<?php esc_attr_e( __( 'Save Options', 'tb_string_swap' ) ); ?>" />
-			            <input type="submit" class="reset-button button-secondary" name="reset" value="<?php esc_attr_e( 'Restore Defaults' ); ?>" onclick="return confirm( '<?php print esc_js( __( 'Click OK to reset. Any theme settings will be lost!', 'tb_string_swap' ) ); ?>' );" />
+						<input type="submit" class="button-primary" name="update" value="<?php esc_attr_e( __( 'Save Options', 'theme-blvd-string-swap' ) ); ?>" />
+			            <input type="submit" class="reset-button button-secondary" name="reset" value="<?php esc_attr_e( 'Restore Defaults' ); ?>" onclick="return confirm( '<?php print esc_js( __( 'Click OK to reset. Any theme settings will be lost!', 'theme-blvd-string-swap' ) ); ?>' );" />
 			            <div class="clear"></div>
 					</div>
 				</form><!-- #tb_string_swap_form (end) -->
@@ -407,17 +433,23 @@ function tb_string_swap_page() {
 /**
  * Primary Filter
  *
- * This is the actual function that is used to add 
- * the filter to "themeblvd_frontend_locals" of the 
- * theme framework.
+ * This is the actual function that is used to add
+ * the filter to "themeblvd_frontend_locals" of the
+ * theme framework. Frontend only!
  */
-
 function tb_string_swap_apply_changes( $locals ) {
-	$new_locals = get_option('tb_string_swap');
-	foreach ( $locals as $id => $string ) {
-		if( isset( $new_locals[$id] ) )
-			$locals[$id] = $new_locals[$id];
+
+	if ( ! is_admin() || ( defined('DOING_AJAX') && DOING_AJAX ) ) {
+
+		$new_locals = get_option('theme-blvd-string-swap');
+
+		foreach ( $locals as $id => $string ) {
+			if ( isset( $new_locals[$id] ) ) {
+				$locals[$id] = $new_locals[$id];
+			}
+		}
 	}
+
 	return $locals;
 }
 add_filter( 'themeblvd_frontend_locals', 'tb_string_swap_apply_changes', 999 );
@@ -425,19 +457,18 @@ add_filter( 'themeblvd_frontend_locals', 'tb_string_swap_apply_changes', 999 );
 /**
  * Blog Meta action
  */
-
 function tb_string_swap_blog_meta() {
 
 	// Grab parts
-	$new_locals = get_option('tb_string_swap');
+	$new_locals = get_option('theme-blvd-string-swap');
 	$meta = $new_locals['blog_meta'];
 	$author_string = '<a href="'.get_author_posts_url( get_the_author_meta( 'ID' ) ).'" rel="author">'.get_the_author().'</a>';
-	
+
 	// Macro replacements
 	$meta = str_replace( '%date%', get_the_time( get_option('date_format') ), $meta );
 	$meta = str_replace( '%author%', $author_string, $meta );
 	$meta = str_replace( '%categories%', get_the_category_list(', '), $meta );
-	
+
 	// Display it
 	echo '<div class="entry-meta">'.$meta.'</div><!-- .entry-meta (end) -->';
 }
@@ -445,15 +476,16 @@ function tb_string_swap_blog_meta() {
 /**
  * Add/Remove actions
  *
- * Only if the user inputted something for the blog 
- * meta option and after theme has been setup, 
- * remove all current actions on the themeblvd_blog_meta 
- * hook, and add in this one. 
+ * Only if the user inputted something for the blog
+ * meta option and after theme has been setup,
+ * remove all current actions on the themeblvd_blog_meta
+ * hook, and add in this one.
  */
-
 function tb_string_swap_add_actions() {
-	$new_locals = get_option('tb_string_swap');
-	if( isset( $new_locals['blog_meta'] ) && $new_locals['blog_meta'] ) {
+
+	$new_locals = get_option('theme-blvd-string-swap');
+
+	if ( isset( $new_locals['blog_meta'] ) && $new_locals['blog_meta'] ) {
 		remove_all_actions( 'themeblvd_blog_meta' );
 		add_action( 'themeblvd_blog_meta', 'tb_string_swap_blog_meta' );
 	}
