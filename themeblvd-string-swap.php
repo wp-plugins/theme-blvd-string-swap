@@ -2,7 +2,7 @@
 /*
 Plugin Name: Theme Blvd String Swap
 Description: This plugin will allow you alter the standard text strings that appear on the frontend of your site when using a Theme Blvd theme.
-Version: 1.0.6
+Version: 1.0.7
 Author: Theme Blvd
 Author URI: http://themeblvd.com
 License: GPL2
@@ -25,7 +25,7 @@ License: GPL2
 
 */
 
-define( 'TB_STRING_SWAP_PLUGIN_VERSION', '1.0.6' );
+define( 'TB_STRING_SWAP_PLUGIN_VERSION', '1.0.7' );
 define( 'TB_STRING_SWAP_PLUGIN_DIR', dirname( __FILE__ ) );
 define( 'TB_STRING_SWAP_PLUGIN_URI', plugins_url( '' , __FILE__ ) );
 
@@ -276,7 +276,7 @@ function tb_string_swap_admin() {
 			'cap'			=> apply_filters( 'tb_string_swap_cap', 'edit_theme_options' )
 		);
 
-		$_tb_string_swap_admin = new Theme_Blvd_Options_Page( 'theme-blvd-string-swap', $options, $args );
+		$_tb_string_swap_admin = new Theme_Blvd_Options_Page( 'tb_string_swap', $options, $args );
 
 	} else {
 
@@ -307,7 +307,7 @@ function tb_string_swap_rolescheck() {
  */
 function tb_string_swap_add_page() {
 	// Create sub menu page
-	$string_swap_page = add_submenu_page( 'tools.php', 'TB String Swap', 'TB String Swap', 'administrator', 'theme-blvd-string-swap', 'tb_string_swap_page' );
+	$string_swap_page = add_submenu_page( 'tools.php', 'TB String Swap', 'TB String Swap', 'administrator', 'tb_string_swap', 'tb_string_swap_page' );
 	// Adds actions to hook in the required css and javascript
 	add_action( "admin_print_styles-$string_swap_page", 'optionsframework_load_styles' );
 	add_action( "admin_print_scripts-$string_swap_page", 'optionsframework_load_scripts' );
@@ -322,7 +322,7 @@ function tb_string_swap_add_page() {
  */
 function tb_string_swap_init() {
 	// Register settings
-	register_setting( 'tb_string_swap_settings', 'theme-blvd-string-swap', 'tb_string_swap_validate' );
+	register_setting( 'tb_string_swap_settings', 'tb_string_swap', 'tb_string_swap_validate' );
 }
 
 /**
@@ -342,7 +342,7 @@ function tb_string_swap_validate( $input ) {
 	// Reset Settings
 	if ( isset( $_POST['reset'] ) ) {
 		$empty = array();
-		add_settings_error( 'theme-blvd-string-swap', 'restore_defaults', __( 'Default options restored.', 'theme-blvd-string-swap' ), 'updated fade' );
+		add_settings_error( 'tb_string_swap', 'restore_defaults', __( 'Default options restored.', 'theme-blvd-string-swap' ), 'updated fade' );
 		return $empty;
 	}
 
@@ -378,7 +378,7 @@ function tb_string_swap_validate( $input ) {
 			}
 		}
 
-		add_settings_error( 'theme-blvd-string-swap', 'save_options', __( 'Options saved.', 'theme-blvd-string-swap' ), 'updated fade' );
+		add_settings_error( 'tb_string_swap', 'save_options', __( 'Options saved.', 'theme-blvd-string-swap' ), 'updated fade' );
 
 		return $clean;
 	}
@@ -396,12 +396,12 @@ function tb_string_swap_validate( $input ) {
 function tb_string_swap_page() {
 
 	// DEBUG
-	// $settings = get_option('theme-blvd-string-swap');
+	// $settings = get_option('tb_string_swap');
 	// echo '<pre>'; print_r($settings); echo '</pre>';
 
 	// Build form
 	$options = tb_string_swap_get_options();
-	$settings = get_option('theme-blvd-string-swap');
+	$settings = get_option('tb_string_swap');
 	$form = optionsframework_fields( 'options', $options, $settings, false );
 	settings_errors();
 	?>
@@ -441,7 +441,7 @@ function tb_string_swap_apply_changes( $locals ) {
 
 	if ( ! is_admin() || ( defined('DOING_AJAX') && DOING_AJAX ) ) {
 
-		$new_locals = get_option('theme-blvd-string-swap');
+		$new_locals = get_option('tb_string_swap');
 
 		foreach ( $locals as $id => $string ) {
 			if ( isset( $new_locals[$id] ) ) {
@@ -460,7 +460,7 @@ add_filter( 'themeblvd_frontend_locals', 'tb_string_swap_apply_changes', 999 );
 function tb_string_swap_blog_meta() {
 
 	// Grab parts
-	$new_locals = get_option('theme-blvd-string-swap');
+	$new_locals = get_option('tb_string_swap');
 	$meta = $new_locals['blog_meta'];
 	$author_string = '<a href="'.get_author_posts_url( get_the_author_meta( 'ID' ) ).'" rel="author">'.get_the_author().'</a>';
 
@@ -483,7 +483,7 @@ function tb_string_swap_blog_meta() {
  */
 function tb_string_swap_add_actions() {
 
-	$new_locals = get_option('theme-blvd-string-swap');
+	$new_locals = get_option('tb_string_swap');
 
 	if ( isset( $new_locals['blog_meta'] ) && $new_locals['blog_meta'] ) {
 		remove_all_actions( 'themeblvd_blog_meta' );
