@@ -2,12 +2,12 @@
 /*
 Plugin Name: Theme Blvd String Swap
 Description: This plugin will allow you alter the standard text strings that appear on the frontend of your site when using a Theme Blvd theme.
-Version: 1.0.7
+Version: 1.0.8
 Author: Theme Blvd
 Author URI: http://themeblvd.com
 License: GPL2
 
-    Copyright 2014  Theme Blvd
+    Copyright 2016  Theme Blvd
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -25,7 +25,7 @@ License: GPL2
 
 */
 
-define( 'TB_STRING_SWAP_PLUGIN_VERSION', '1.0.7' );
+define( 'TB_STRING_SWAP_PLUGIN_VERSION', '1.0.8' );
 define( 'TB_STRING_SWAP_PLUGIN_DIR', dirname( __FILE__ ) );
 define( 'TB_STRING_SWAP_PLUGIN_URI', plugins_url( '' , __FILE__ ) );
 
@@ -270,9 +270,9 @@ function tb_string_swap_admin() {
 		$options = tb_string_swap_get_options();
 
 		$args = array(
-			'parent'		=> 'tools.php',
-			'page_title' 	=> __( 'Theme Blvd String Swap', 'theme-blvd-string-swap' ),
-			'menu_title' 	=> __( 'TB String Swap', 'theme-blvd-string-swap' ),
+			'parent'		=> 'themes.php', // only used prior to framework 2.5.2
+			'page_title' 	=> __( 'Theme Text Strings', 'theme-blvd-string-swap' ),
+			'menu_title' 	=> __( 'Theme Text Strings', 'theme-blvd-string-swap' ),
 			'cap'			=> apply_filters( 'tb_string_swap_cap', 'edit_theme_options' )
 		);
 
@@ -307,7 +307,7 @@ function tb_string_swap_rolescheck() {
  */
 function tb_string_swap_add_page() {
 	// Create sub menu page
-	$string_swap_page = add_submenu_page( 'tools.php', 'TB String Swap', 'TB String Swap', 'administrator', 'tb_string_swap', 'tb_string_swap_page' );
+	$string_swap_page = add_submenu_page( 'themes.php', __('Theme Text Strings', 'theme-blvd-string-swap'), __('Theme Text Strings', 'theme-blvd-string-swap'), 'administrator', 'tb_string_swap', 'tb_string_swap_page' );
 	// Adds actions to hook in the required css and javascript
 	add_action( "admin_print_styles-$string_swap_page", 'optionsframework_load_styles' );
 	add_action( "admin_print_scripts-$string_swap_page", 'optionsframework_load_scripts' );

@@ -2,7 +2,7 @@
 Contributors: themeblvd
 Tags: themeblvd, localization, localize, translate
 Requires at least: Theme Blvd Framework 2.0+
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 
 When using a theme with Theme Blvd framework version 2.0+, this plugin is will allow to translate strings you see on the frontend of your website.
 
@@ -22,50 +22,54 @@ This plugin is useful for people trying to accomplish a couple different things.
 
 Within the Theme Blvd framework, *most* strings that appear on the frontend of your site come from a single array that we've placed a filter on. This means that from your own child theme or plugin, you could easily change any one of these text strings.
 
-After you install this plugin, you can then go to *Tools > TB String Swap* in your WordPress admin panel and change any of these text strings through the user-friendly interface, opposed to ever editing any code.
+After you install this plugin, you can then go to *Appearance > Theme Text Strings* in your WordPress admin panel and change any of these text strings through the user-friendly interface, opposed to ever editing any code.
 
 == Installation ==
 
 1. Upload `theme-blvd-string-swap` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to *Tools > TB String Swap* to use.
+3. Go to *Appearance > Text Strings* to use.
 
 == Screenshots ==
 
-1. Admin interface for plugin under *Tools > TB String Swap*.
+1. Admin interface for plugin under *Appearance > Theme Text Strings*.
 
 == Changelog ==
 
-= 1.0.7 =
+= 1.0.8 - 09/07/2015 =
+
+* Admin page moved to *Appearance > Theme Text Strings*.
+
+= 1.0.7 - 12/17/14 =
 
 * Fixed issues with previously saved options not showing up after last update.
 
-= 1.0.6 =
+= 1.0.6 - 12/11/14 =
 
 * GlotPress compatibility (for 2015 wordpress.org release).
 * Minor security fix.
 
-= 1.0.5 =
+= 1.0.5 - 06/05/13 =
 
 * Fixed "Dismiss" link not working for framework notice on all admin pages.
 
-= 1.0.4 =
+= 1.0.4 - 05/28/13 =
 
 * Added compatibility for framework v2.3.
 
-= 1.0.3 =
+= 1.0.3 - 09/18/12 =
 
 * Added compatibility for framework v2.2.
 
-= 1.0.2 =
+= 1.0.2 - 08/22/12 =
 
 * Added compatibility for latest Theme Blvd patch updates - Akita v1.1.5, Alyeska v2.1.5, Arcadian v1.1.5, Barely Corporate v3.1.5, Breakout v1.1.4, Prime Time v1.1.4, and Swagger 1.1.5
 
-= 1.0.1 =
+= 1.0.1 - 05/18/12 =
 
 * Plugin now works with a more dynamically to pull text strings with new structure of [Theme Blvd Framework 2.1 update](http://www.wpjumpstart.com/framework-updates/theme-blvd-2-1-0-framework-update/) with fallbacks built-in for previous framework versions.
 * Added higher priority to text string filter to ensure that the plugin will, not only override the framework, but also any text strings edits your premium theme may have made.
 
-= 1.0.0 =
+= 1.0.0 - 01/30/12 =
 
 * This is the first release.
